@@ -35,8 +35,8 @@ jobs:
           
       - name: Build APK
         run: |
-          # 修复点：增加了英文名称 --name "mynoteapp"
-          flet build apk --name "mynoteapp" --project "我的智能笔记" --org "com.zak.notes"
+          # 这一次我们放弃中文名，先保证 APK 成功产出
+          flet build apk --project "mynoteapp" --org "com.zak.notes"
 
       - name: Upload APK
         if: success()
