@@ -7,7 +7,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    # --- 关键：强制开启 Node 24 运行环境 ---
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
       
@@ -36,8 +35,8 @@ jobs:
           
       - name: Build APK
         run: |
-          # 运行正式打包
-          flet build apk --project "我的智能笔记" --org "com.zak.notes"
+          # 修复点：增加了英文名称 --name "mynoteapp"
+          flet build apk --name "mynoteapp" --project "我的智能笔记" --org "com.zak.notes"
 
       - name: Upload APK
         if: success()
