@@ -9,13 +9,29 @@ from datetime import datetime
 import json
 import os
 
-
 def main(page: ft.Page):
     page.title = "智能笔记"
-    page.theme_mode = ft.ThemeMode.LIGHT
-    page.window_width = 450
-    page.window_height = 800
+    
+    # --- 终极路径修复方案 ---
+    # 我们直接尝试使用 page.client_storage 这种更安全的沙盒路径
+    if page.platform == ft.PagePlatform.ANDROID or page.platform == ft.PagePlatform.IOS:
+        # 在安卓上，获取一个绝对安全的私有目录
+        # 如果 pwa_storage_path 不行，就降级使用当前目录，但在安卓通常需要这个：
+        data_path = os.environ.get("FLET_APP_STORAGE_DATA", ".")
+        DB_FILE = os.path.join(data_path, "my_app_data.json")
+    else:
+        DB_FILE = "my_app_data.json"
 
+    # 添加一个简单的错误捕获，防止白屏
+    def load_data():
+        try:
+            if os.path.exists(DB_FILE):
+                with open(DB_FILE, "r", encoding="utf-8") as f:
+                    return json.load(f)
+        except Exception as e:
+            # 如果读取失败，至少让 App 能跑起来
+            print(f"Read error: {e}")
+        return {"categories": ["默认分类", "工作"], "logs_data": {"默认分类": [], "工作": []}}
     # --- 1. 安卓路径适配逻辑 ---
     # 在手机上，直接使用相对路径可能无法写入，我们需要获取 App 的私有存储目录
     if page.platform == ft.PagePlatform.ANDROID or page.platform == ft.PagePlatform.IOS:
